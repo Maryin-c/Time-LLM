@@ -3,9 +3,9 @@
 #SBATCH --job-name=qwen_test
 #SBATCH --output=./res/qwen_long_term_ETTh1_96_res.txt
 #SBATCH --error=./res/qwen_long_term_ETTh1_96_error.txt
-#SBATCH --time=24:00:00
-#SBATCH --gres=gpu:a100-40:1
-#SBATCH --mem=32G
+#SBATCH --time=96:00:00
+#SBATCH --gres=gpu:h100-47:1
+#SBATCH --mem=64G
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=e1350606@u.nus.edu
 
@@ -21,7 +21,7 @@ llama_layers=32
 
 #master_port=25000
 #num_process=2
-batch_size=8
+batch_size=4
 d_model=32
 d_ff=128
 

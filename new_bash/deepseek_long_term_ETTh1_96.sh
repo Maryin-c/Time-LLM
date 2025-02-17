@@ -3,8 +3,8 @@
 #SBATCH --job-name=deepseek_test
 #SBATCH --output=./res/deepseek_long_term_ETTh1_96_res.txt
 #SBATCH --error=./res/deepseek_long_term_ETTh1_96_error.txt
-#SBATCH --time=24:00:00
-#SBATCH --gres=gpu:a100-40:1
+#SBATCH --time=96:00:00
+#SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=64G
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=e1350606@u.nus.edu
@@ -13,15 +13,16 @@ source ../../miniconda3/etc/profile.d/conda.sh
 conda activate qwen
 
 #export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+#export MASTER_PORT=29501
 
 model_name=TimeLLM
 train_epochs=10
 learning_rate=0.01
 llama_layers=32
 
-#master_port=25000
-#num_process=2
-batch_size=8
+#master_port=25901
+#num_process=1
+batch_size=4
 d_model=32
 d_ff=128
 
