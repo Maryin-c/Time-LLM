@@ -186,6 +186,41 @@ class Model(nn.Module):
                     trust_remote_code=True,
                     local_files_only=False
                 )
+        elif configs.llm_model == 'DeepSeek':
+            self.qwen_config = AutoConfig.from_pretrained("deepseek-ai/DeepSeek-V2-Lite")
+            # self.qwen_config.num_hidden_layers = configs.llm_layers 
+            self.qwen_config.output_attentions = True 
+            self.qwen_config.output_hidden_states = True  
+
+            try:
+                self.llm_model = AutoModel.from_pretrained(
+                    "deepseek-ai/DeepSeek-V2-Lite",
+                    trust_remote_code=True,  
+                    local_files_only=True,  
+                    config=self.qwen_config,
+                )
+            except EnvironmentError:  # downloads model from HF is not already done
+                print("Local model files not found. Attempting to download...")
+                self.llm_model = AutoModel.from_pretrained(
+                    "deepseek-ai/DeepSeek-V2-Lite",
+                    trust_remote_code=True,  
+                    local_files_only=False,  
+                    config=self.qwen_config,
+                )
+
+            try:
+                self.tokenizer = AutoTokenizer.from_pretrained(
+                    "deepseek-ai/DeepSeek-V2-Lite",
+                    trust_remote_code=True,
+                    local_files_only=True
+                )
+            except EnvironmentError:  # downloads the tokenizer from HF if not already done
+                print("Local tokenizer files not found. Atempting to download them..")
+                self.tokenizer = AutoTokenizer.from_pretrained(
+                    "deepseek-ai/DeepSeek-V2-Lite",
+                    trust_remote_code=True,
+                    local_files_only=False
+                )
         else:
             raise Exception('LLM model is not defined')
 
