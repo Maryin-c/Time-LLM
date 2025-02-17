@@ -152,7 +152,7 @@ for ii in range(args.itr):
     time_now = time.time()
 
     train_steps = len(train_loader)
-    early_stopping = EarlyStopping(accelerator=accelerator, patience=args.patience, verbose=True)
+    early_stopping = EarlyStopping(accelerator=accelerator, patience=args.patience, verbose=True, save_mode=False)
 
     model_optim = optim.Adam(model.parameters(), lr=args.learning_rate)
 

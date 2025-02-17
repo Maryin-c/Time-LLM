@@ -143,7 +143,7 @@ for ii in range(args.itr):
     time_now = time.time()
 
     train_steps = len(train_loader)
-    early_stopping = EarlyStopping(accelerator=accelerator, patience=args.patience)
+    early_stopping = EarlyStopping(accelerator=accelerator, patience=args.patience, save_mode=False)
 
     trained_parameters = []
     for p in model.parameters():
