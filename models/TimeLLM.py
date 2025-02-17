@@ -5,7 +5,7 @@ import torch.nn as nn
 
 from transformers import LlamaConfig, LlamaModel, LlamaTokenizer, GPT2Config, GPT2Model, GPT2Tokenizer, BertConfig, \
     BertModel, BertTokenizer
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from transformers import AutoModel, AutoTokenizer, AutoConfig
 from layers.Embed import PatchEmbedding
 import transformers
 from layers.StandardNorm import Normalize
@@ -153,17 +153,39 @@ class Model(nn.Module):
                 )
         elif configs.llm_model == 'Qwen':
             self.qwen_config = AutoConfig.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
-            # self.qwen_config.num_hidden_layers = configs.llm_layers  # 自定义层数
-            self.qwen_config.output_attentions = True  # 输出注意力权重
-            self.qwen_config.output_hidden_states = True  # 输出隐藏状态
+            # self.qwen_config.num_hidden_layers = configs.llm_layers 
+            self.qwen_config.output_attentions = True 
+            self.qwen_config.output_hidden_states = True  
 
-            self.llm_model = AutoModelForCausalLM.from_pretrained(
-                "Qwen/Qwen2.5-7B-Instruct",
-                torch_dtype="auto",
-                device_map="auto",
-                config=self.qwen_config,
-            )
-            self.tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
+            try:
+                self.llm_model = AutoModel.from_pretrained(
+                    "Qwen/Qwen2.5-7B-Instruct",
+                    trust_remote_code=True,  
+                    local_files_only=True,  
+                    config=self.qwen_config,
+                )
+            except EnvironmentError:  # downloads model from HF is not already done
+                print("Local model files not found. Attempting to download...")
+                self.llm_model = AutoModel.from_pretrained(
+                    "Qwen/Qwen2.5-7B-Instruct",
+                    trust_remote_code=True,  
+                    local_files_only=False,  
+                    config=self.qwen_config,
+                )
+
+            try:
+                self.tokenizer = AutoTokenizer.from_pretrained(
+                    "Qwen/Qwen2.5-7B-Instruct",
+                    trust_remote_code=True,
+                    local_files_only=True
+                )
+            except EnvironmentError:  # downloads the tokenizer from HF if not already done
+                print("Local tokenizer files not found. Atempting to download them..")
+                self.tokenizer = AutoTokenizer.from_pretrained(
+                    "Qwen/Qwen2.5-7B-Instruct",
+                    trust_remote_code=True,
+                    local_files_only=False
+                )
         else:
             raise Exception('LLM model is not defined')
 
