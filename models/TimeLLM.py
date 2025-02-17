@@ -5,7 +5,7 @@ import torch.nn as nn
 
 from transformers import LlamaConfig, LlamaModel, LlamaTokenizer, GPT2Config, GPT2Model, GPT2Tokenizer, BertConfig, \
     BertModel, BertTokenizer
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from layers.Embed import PatchEmbedding
 import transformers
 from layers.StandardNorm import Normalize
@@ -152,10 +152,16 @@ class Model(nn.Module):
                     local_files_only=False
                 )
         elif configs.llm_model == 'Qwen':
+            self.qwen_config = AutoConfig.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
+            self.qwen_config.num_hidden_layers = configs.llm_layers  # 自定义层数
+            self.qwen_config.output_attentions = True  # 输出注意力权重
+            self.qwen_config.output_hidden_states = True  # 输出隐藏状态
+
             self.llm_model = AutoModelForCausalLM.from_pretrained(
                 "Qwen/Qwen2.5-7B-Instruct",
                 torch_dtype="auto",
-                device_map="auto"
+                device_map="auto",
+                config=self.qwen_config,
             )
             self.tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
         else:
