@@ -153,7 +153,7 @@ class Model(nn.Module):
                 )
         elif configs.llm_model == 'Qwen':
             self.qwen_config = AutoConfig.from_pretrained("Qwen/Qwen2.5-7B-Instruct")
-            self.qwen_config.num_hidden_layers = configs.llm_layers  # 自定义层数
+            # self.qwen_config.num_hidden_layers = configs.llm_layers  # 自定义层数
             self.qwen_config.output_attentions = True  # 输出注意力权重
             self.qwen_config.output_hidden_states = True  # 输出隐藏状态
 

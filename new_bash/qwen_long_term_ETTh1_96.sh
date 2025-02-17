@@ -53,4 +53,5 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --llm_layers $llama_layers \
   --train_epochs $train_epochs \
   --model_comment $comment \
-  --llm_model Qwen
+  --llm_model Qwen \
+  --llm_dim 3584
