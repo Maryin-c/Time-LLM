@@ -10,7 +10,7 @@
 #SBATCH --mail-user=e1350606@u.nus.edu
 
 source ../../miniconda3/etc/profile.d/conda.sh
-conda activate timellm
+conda activate qwen
 
 #export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
