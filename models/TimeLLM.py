@@ -187,17 +187,17 @@ class Model(nn.Module):
                     local_files_only=False
                 )
         elif configs.llm_model == 'DeepSeek':
-            self.qwen_config = AutoConfig.from_pretrained("deepseek-ai/DeepSeek-V2-Lite")
-            # self.qwen_config.num_hidden_layers = configs.llm_layers 
-            self.qwen_config.output_attentions = True 
-            self.qwen_config.output_hidden_states = True  
+            self.deepseek_config = AutoConfig.from_pretrained("deepseek-ai/DeepSeek-V2-Lite", trust_remote_code=True)
+            # self.deepseek_config.num_hidden_layers = configs.llm_layers 
+            self.deepseek_config.output_attentions = True 
+            self.deepseek_config.output_hidden_states = True  
 
             try:
                 self.llm_model = AutoModel.from_pretrained(
                     "deepseek-ai/DeepSeek-V2-Lite",
                     trust_remote_code=True,  
                     local_files_only=True,  
-                    config=self.qwen_config,
+                    config=self.deepseek_config,
                 )
             except EnvironmentError:  # downloads model from HF is not already done
                 print("Local model files not found. Attempting to download...")
@@ -205,7 +205,7 @@ class Model(nn.Module):
                     "deepseek-ai/DeepSeek-V2-Lite",
                     trust_remote_code=True,  
                     local_files_only=False,  
-                    config=self.qwen_config,
+                    config=self.deepseek_config,
                 )
 
             try:
