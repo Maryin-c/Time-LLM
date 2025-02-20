@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=time_llm_test
-#SBATCH --output=./res/long_term_ETTh1_720_res.txt
-#SBATCH --error=./res/long_term_ETTh1_720_error.txt
+#SBATCH --output=./res/long_term_ETTh2_res.txt
+#SBATCH --error=./res/long_term_ETTh2_error.txt
 #SBATCH --time=48:00:00
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=64G
