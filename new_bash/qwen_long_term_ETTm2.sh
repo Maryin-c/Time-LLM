@@ -51,7 +51,7 @@ comment='TimeLLM-ETTm2'
 #   --train_epochs $train_epochs \
 #   --model_comment $comment
 
-accelerate launch --multi_gpu --mixed_precision bf16 --num_processes $num_process --main_process_port $master_port run_main.py \
+accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
   --is_training 1 \
   --root_path ./dataset/ETT-small/ \
@@ -109,7 +109,7 @@ accelerate launch --multi_gpu --mixed_precision bf16 --num_processes $num_proces
 #   --train_epochs $train_epochs \
 #   --model_comment $comment
 
-accelerate launch --multi_gpu --mixed_precision bf16 --num_processes $num_process --main_process_port $master_port run_main.py \
+accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
   --is_training 1 \
   --root_path ./dataset/ETT-small/ \

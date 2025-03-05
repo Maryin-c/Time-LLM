@@ -136,7 +136,7 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --learning_rate 0.005 \
   --lradj 'TST'\
   --llm_layers $llama_layers \
-  --train_epochs 20 \
+  --train_epochs $train_epochs \
   --patience 10 \
   --model_comment $comment \
   --llm_model DeepSeek \
