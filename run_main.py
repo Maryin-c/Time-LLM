@@ -98,6 +98,16 @@ parser.add_argument('--use_amp', action='store_true', help='use automatic mixed 
 parser.add_argument('--llm_layers', type=int, default=6)
 parser.add_argument('--percent', type=int, default=100)
 
+
+
+# wxq add for attention
+# choices: mha, mqa, gqa, mla
+parser.add_argument('--attn_type', type=str, default='mha', help='attention type of ReprogrammingLayer')
+parser.add_argument('--n_groups', type=int, default=4, help='head groups for GQA')
+
+parser.add_argument('--q_lora_rank', type=int, default=16, help='q_lora_rank in mla')
+parser.add_argument('--kv_lora_rank', type=int, default=16, help='kv_lora_rank in mla')
+
 args = parser.parse_args()
 ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
 deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero2.json')

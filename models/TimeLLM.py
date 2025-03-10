@@ -249,7 +249,23 @@ class Model(nn.Module):
         self.num_tokens = 1000
         self.mapping_layer = nn.Linear(self.vocab_size, self.num_tokens)
 
-        self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
+
+        if configs.attn_type == 'mha':
+            print(f'ReprogrammingLayer using MHA......')
+            self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
+        elif configs.attn_type == 'mqa':
+            print(f'ReprogrammingLayer using MQA......')
+            self.reprogramming_layer = ReprogrammingLayer_MQA(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
+        elif configs.attn_type == 'GQA':
+            print(f'ReprogrammingLayer using GQA......')
+            self.reprogramming_layer = ReprogrammingLayer_GQA(configs.d_model, configs.n_heads, configs.n_groups, self.d_ff, self.d_llm)
+        elif configs.attn_type == 'mla':
+            self.reprogramming_layer = ReprogrammingLayer_MLA(d_model=configs.d_model, n_heads=configs.n_heads,  d_llm=self.d_llm, q_lora_rank=configs.q_lora_rank, kv_lora_rank=configs.q_lora_rank)
+            print(f'ReprogrammingLayer using MLA......')
+        else:
+            print(f'wrong type of attention mechanism in ReprogrammingLayer')
+            exit()
+
 
         self.patch_nums = int((configs.seq_len - self.patch_len) / self.stride + 2)
         self.head_nf = self.d_ff * self.patch_nums
@@ -374,3 +390,193 @@ class ReprogrammingLayer(nn.Module):
         reprogramming_embedding = torch.einsum("bhls,she->blhe", A, value_embedding)
 
         return reprogramming_embedding
+    
+"""wxq add """
+
+class ReprogrammingLayer_MQA(nn.Module):
+    def __init__(self, d_model, n_heads, d_keys=None, d_llm=None, attention_dropout=0.1):
+        super(ReprogrammingLayer_MQA, self).__init__()
+
+        d_keys = d_keys or (d_model // n_heads)
+
+        self.query_projection = nn.Linear(d_model, d_keys * n_heads)
+
+        # share single head key and value
+        self.key_projection = nn.Linear(d_llm, d_keys * 1)
+        self.value_projection = nn.Linear(d_llm, d_keys * 1)
+
+
+        self.out_projection = nn.Linear(d_keys * n_heads, d_llm)
+        self.n_heads = n_heads
+        self.dropout = nn.Dropout(attention_dropout)
+
+    def forward(self, target_embedding, source_embedding, value_embedding):
+        B, L, _ = target_embedding.shape
+        S, _ = source_embedding.shape
+        H = self.n_heads
+
+        target_embedding = self.query_projection(target_embedding).view(B, L, H, -1)
+        source_embedding = self.key_projection(source_embedding).view(S, 1, -1)
+        value_embedding = self.value_projection(value_embedding).view(S, 1, -1)
+
+        out = self.reprogramming(target_embedding, source_embedding, value_embedding)
+
+        out = out.reshape(B, L, -1)
+
+        return self.out_projection(out)
+
+    def reprogramming(self, target_embedding, source_embedding, value_embedding):
+        B, L, H, E = target_embedding.shape
+
+        scale = 1. / sqrt(E)
+
+
+        # broadcasting
+        scores = torch.einsum("blhe,ske->bhls", target_embedding, source_embedding)
+
+        A = self.dropout(torch.softmax(scale * scores, dim=-1))
+
+        # broadcasting
+        reprogramming_embedding = torch.einsum("bhls,ske->blhe", A, value_embedding)
+
+        return reprogramming_embedding
+    
+
+
+class ReprogrammingLayer_GQA(nn.Module):
+    def __init__(self, d_model, n_heads, n_groups, d_keys=None, d_llm=None, attention_dropout=0.1):
+        super(ReprogrammingLayer_GQA, self).__init__()
+
+        assert n_heads % n_groups == 0
+
+        d_keys = d_keys or (d_model // n_heads)
+        self.n_heads = n_heads
+        self.n_groups = n_groups 
+        self.heads_per_group = n_heads // n_groups 
+
+        self.query_projection = nn.Linear(d_model, d_keys * n_heads)
+
+        self.key_projection = nn.Linear(d_llm, d_keys * n_groups)
+        self.value_projection = nn.Linear(d_llm, d_keys * n_groups)
+
+        self.out_projection = nn.Linear(d_keys * n_heads, d_llm)
+        self.dropout = nn.Dropout(attention_dropout)
+
+    def forward(self, target_embedding, source_embedding, value_embedding):
+        B, L, _ = target_embedding.shape
+        S, _ = source_embedding.shape
+        H, G = self.n_heads, self.n_groups
+
+        target_embedding = self.query_projection(target_embedding).view(B, L, H, -1)
+
+        source_embedding = self.key_projection(source_embedding).view(S, G, -1)
+        value_embedding = self.value_projection(value_embedding).view(S, G, -1)
+
+        out = self.reprogramming(target_embedding, source_embedding, value_embedding)
+
+        out = out.reshape(B, L, -1)
+
+        return self.out_projection(out)
+
+    def reprogramming(self, target_embedding, source_embedding, value_embedding):
+        B, L, H, E = target_embedding.shape 
+        S, G, E = source_embedding.shape 
+        heads_per_group = self.heads_per_group 
+
+        scale = 1. / sqrt(E)
+
+        scores = torch.einsum("blhe,sge->bhls", target_embedding, source_embedding)
+
+        scores = scores.view(B, G, heads_per_group, L, S).permute(0, 2, 1, 3, 4).reshape(B, H, L, S)
+
+        A = self.dropout(torch.softmax(scale * scores, dim=-1))
+
+        reprogramming_embedding = torch.einsum("bhls,sge->blhe", A, value_embedding)
+
+        return reprogramming_embedding
+    
+
+class ReprogrammingLayer_MLA(nn.Module):
+
+    def __init__(
+        self,
+        d_model: int,
+        n_heads: int,
+        d_llm: int,
+        q_head_dim: int = None,
+        v_head_dim: int = None,
+        q_lora_rank: int = None,
+        kv_lora_rank: int = None,
+        attention_dropout: float = 0.1,
+    ):
+        super(ReprogrammingLayer_MLA, self).__init__()
+        self.d_model = d_model
+        self.d_llm = d_llm
+        self.n_heads = n_heads
+        self.q_head_dim = q_head_dim if q_head_dim is not None else d_model // n_heads
+        self.v_head_dim = v_head_dim if v_head_dim is not None else d_llm // n_heads
+        self.q_lora_rank = q_lora_rank  
+        self.kv_lora_rank = kv_lora_rank
+        
+        self.q_a_proj = nn.Linear(d_model, q_lora_rank, bias=False)
+        self.q_a_layernorm = nn.LayerNorm(q_lora_rank)
+        self.q_b_proj = nn.Linear(q_lora_rank, n_heads * self.q_head_dim, bias=False)
+        
+        self.key_a_proj = nn.Linear(d_llm, kv_lora_rank, bias=False)
+        self.key_a_layernorm = nn.LayerNorm(kv_lora_rank)
+        self.key_b_proj = nn.Linear(kv_lora_rank, n_heads * self.q_head_dim, bias=False)
+        
+        self.value_a_proj = nn.Linear(d_llm, kv_lora_rank, bias=False)
+        self.value_a_layernorm = nn.LayerNorm(kv_lora_rank)
+        self.value_b_proj = nn.Linear(kv_lora_rank, n_heads * self.v_head_dim, bias=False)
+        
+        self.dropout = nn.Dropout(attention_dropout)
+        self.out_proj = nn.Linear(n_heads * self.v_head_dim, d_llm)
+        
+    def forward(self, target_embedding, source_embedding, value_embedding):
+        B, L, _ = target_embedding.shape
+        S = source_embedding.shape[0]
+        
+        q_inter = self.q_a_proj(target_embedding)      
+        q_inter = self.q_a_layernorm(q_inter)      
+        q = self.q_b_proj(q_inter)       
+
+        q = q.view(B, L, self.n_heads, self.q_head_dim)
+        
+        k_inter = self.key_a_proj(source_embedding)        
+        k_inter = self.key_a_layernorm(k_inter)        
+        k = self.key_b_proj(k_inter)        
+        k = k.view(S, self.n_heads, self.q_head_dim)
+        
+        v_inter = self.value_a_proj(value_embedding)          
+        v_inter = self.value_a_layernorm(v_inter)         
+        v = self.value_b_proj(v_inter)                      
+        v = v.view(S, self.n_heads, self.v_head_dim)
+
+        out = self.reprogramming(q, k, v)
+
+        out = out.reshape(B, L, -1)
+
+        return self.out_proj(out)
+
+    def reprogramming(self, target_embedding, source_embedding, value_embedding):
+        B, L, H, E = target_embedding.shape
+
+        scale = 1. / sqrt(E)
+
+        scores = torch.einsum("blhe,she->bhls", target_embedding, source_embedding)
+
+        A = self.dropout(torch.softmax(scale * scores, dim=-1))
+        reprogramming_embedding = torch.einsum("bhls,she->blhe", A, value_embedding)
+
+        return reprogramming_embedding
+        
+
+
+
+
+    
+
+
+
+

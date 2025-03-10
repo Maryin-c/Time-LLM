@@ -1,0 +1,12 @@
+Wind : https://drive.google.com/file/d/13L7K6Jkmf-u9--9lDkZQY0JTQIeL5Xqe/view
+
+ILI  : https://drive.google.com/drive/folders/1DasX30lzEwcVXYaNeyMlQ0PSmCQSow5h
+
+ExchangeRate: https://drive.google.com/file/d/1pjgw4vJJffmhDGVzJmpBH5hbKTHBWaqB/view
+
+
+These results can be comapred with 
+An NCDE-based Framework for Universal Representation Learning
+of Time Series
+
+https://www.ijcai.org/proceedings/2024/0511.pdf
