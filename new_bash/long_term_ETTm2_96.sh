@@ -45,7 +45,7 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --itr 1 \
   --d_model $d_model \
   --d_ff $d_ff \
-  --batch_size 16 \
+  --batch_size $batch_size \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
   --train_epochs $train_epochs \
