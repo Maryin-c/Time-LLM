@@ -27,6 +27,16 @@ class PositionalEmbedding(nn.Module):
         return self.pe[:, :x.size(1)]
 
 
+class LearnedPositionalEmbedding(nn.Module):
+    def __init__(self, d_model, max_len=5000):
+        super().__init__()
+        self.pos_embedding = nn.Parameter(torch.randn(1, max_len, d_model))
+
+    def forward(self, x):
+        seq_len = x.size(1)
+        return self.pos_embedding[:, :seq_len]
+    
+
 class TokenEmbedding(nn.Module):
     def __init__(self, c_in, d_model):
         super(TokenEmbedding, self).__init__()
@@ -169,7 +179,9 @@ class PatchEmbedding(nn.Module):
         self.value_embedding = TokenEmbedding(patch_len, d_model)
 
         # Positional embedding
-        # self.position_embedding = PositionalEmbedding(d_model)
+        self.position_embedding = PositionalEmbedding(d_model)
+        # Learnable position embedding
+        # self.learned_pe = LearnedPositionalEmbedding(d_model)
 
         # Residual dropout
         self.dropout = nn.Dropout(dropout)
@@ -182,6 +194,11 @@ class PatchEmbedding(nn.Module):
         x = torch.reshape(x, (x.shape[0] * x.shape[1], x.shape[2], x.shape[3]))
         # Input encoding
         x = self.value_embedding(x)
+        # dynamic position encoding
+        seq_len = x.size(1)
+        pos = self.position_embedding.pe[:, :seq_len]
+        print(f"x.shape: {x.shape}, pos.shape: {pos.shape}")
+        x = x + pos
         return self.dropout(x), n_vars
 
 
