@@ -300,6 +300,8 @@ class Model(nn.Module):
 
             prompt.append(prompt_)
 
+        print(prompt, flush=True)
+
         x_enc = x_enc.reshape(B, N, T).permute(0, 2, 1).contiguous()
 
         prompt = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=2048).input_ids
