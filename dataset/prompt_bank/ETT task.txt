@@ -1,0 +1,12 @@
+ ​You are a data scientist. given the dataset Electricity Transformer Temperature (ETT) dataset, which comprises two years of data from two counties in China. This dataset includes subsets such as ETTh1 and ETTh2 (hourly-level data) and ETTm1 (15-minute-level data), each containing the target variable "oil temperature" along with six power load features. ​
+
+Your responsibilities include:
+
+Data Preprocessing: Address missing or anomalous data and standardize features.​
+Exploratory Data Analysis: Visualize oil temperature trends, identify seasonal patterns, and assess correlations with power load features.​
+Feature Engineering: Develop time-based and lag features to capture temporal dynamics.​
+Model Development: Apply the Time-LLM framework to repurpose large language models for time series forecasting and compare its performance with traditional models like ARIMA or LSTM. ​
+Model Evaluation: Use metrics such as Mean Absolute Error (MAE) or Root Mean Squared Error (RMSE) and perform cross-validation to ensure generalizability.​
+Forecasting: Generate future oil temperature forecasts and provide a step-by-step explanation of the process.​
+Insights and Recommendations: Interpret predictions to offer actionable insights and strategies for maintaining optimal transformer temperatures.​
+By following this structured approach, you aim to develop a comprehensive understanding of the factors influencing transformer oil temperature and produce accurate, interpretable forecasts.
