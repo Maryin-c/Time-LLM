@@ -15,7 +15,7 @@ if __name__ == '__main__':
     S = 64
     target_embedding = torch.randn((btz, seq_len, d_model))
     source_embedding = torch.randn((S, d_llm))
-    value_embedding = torch.randn((S, d_llm))
+    value_embedding = source_embedding
 
     print(f'target_embedding.shape:{target_embedding.shape}')
     print(f'source_embedding.shape:{source_embedding.shape}')
