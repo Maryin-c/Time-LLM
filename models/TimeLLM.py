@@ -300,7 +300,7 @@ class Model(nn.Module):
 
             prompt.append(prompt_)
 
-        print(prompt, flush=True)
+        # print(prompt, flush=True)
 
         x_enc = x_enc.reshape(B, N, T).permute(0, 2, 1).contiguous()
 
