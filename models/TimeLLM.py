@@ -238,6 +238,8 @@ class Model(nn.Module):
             self.description = configs.content
         else:
             self.description = 'The Electricity Transformer Temperature (ETT) is a crucial indicator in the electric power long-term deployment.'
+        
+        print(self.description, flush=True)
 
         self.dropout = nn.Dropout(configs.dropout)
 

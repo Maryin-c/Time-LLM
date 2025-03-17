@@ -137,6 +137,7 @@ for ii in range(args.itr):
     path = os.path.join(args.checkpoints,
                         setting + '-' + args.model_comment)  # unique checkpoint saving path
     args.content = load_content(args)
+    print(args.content, flush=True)
     if not os.path.exists(path) and accelerator.is_local_main_process:
         os.makedirs(path)
 
