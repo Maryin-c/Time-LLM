@@ -19,7 +19,7 @@ llama_layers=32
 
 #master_port=25901
 #num_process=1
-batch_size=4
+batch_size=16
 d_model=32
 d_ff=128
 

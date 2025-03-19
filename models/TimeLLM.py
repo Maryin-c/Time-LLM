@@ -223,6 +223,10 @@ class Model(nn.Module):
                 )
         else:
             raise Exception('LLM model is not defined')
+        
+        if self.llm_model.supports_gradient_checkpointing:
+            self.llm_model.gradient_checkpointing_enable()
+            print(f"Gradient Checkpointing: {self.llm_model.is_gradient_checkpointing}", flush=True)
 
         if self.tokenizer.eos_token:
             self.tokenizer.pad_token = self.tokenizer.eos_token
