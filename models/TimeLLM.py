@@ -249,7 +249,7 @@ class Model(nn.Module):
         self.num_tokens = 1000
         self.mapping_layer = nn.Linear(self.vocab_size, self.num_tokens)
 
-        self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, configs.windows_size, self.d_ff, self.d_llm)
+        self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, configs.window_size, self.d_ff, self.d_llm)
 
         self.patch_nums = int((configs.seq_len - self.patch_len) / self.stride + 2)
         self.head_nf = self.d_ff * self.patch_nums
