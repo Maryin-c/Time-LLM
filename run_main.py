@@ -121,9 +121,8 @@ run = wandb.init(
     project="long-term-attn-test",
     # Track hyperparameters and run metadata.
     config={
-        "learning_rate": args.learning_rate,
+        "pred_len": args.pred_len,
         "attn": args.attn_type,
-        "epochs": args.train_epochs,
     },
 )
 
