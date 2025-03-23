@@ -114,9 +114,8 @@ run = wandb.init(
     project="long-term-revised-test",
     # Track hyperparameters and run metadata.
     config={
-        "learning_rate": args.learning_rate,
         "window_size": args.window_size,
-        "epochs": args.train_epochs,
+        "pred_len": args.pred_len,
     },
 )
 
