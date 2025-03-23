@@ -260,7 +260,7 @@ class Model(nn.Module):
             print(f'ReprogrammingLayer using GQA......')
             self.reprogramming_layer = ReprogrammingLayer_GQA(configs.d_model, configs.n_heads, configs.n_groups, self.d_ff, self.d_llm)
         elif configs.attn_type == 'mla':
-            self.reprogramming_layer = ReprogrammingLayer_MLA(d_model=configs.d_model, n_heads=configs.n_heads,  d_llm=self.d_llm, q_lora_rank=configs.q_lora_rank, kv_lora_rank=configs.q_lora_rank)
+            self.reprogramming_layer = ReprogrammingLayer_MLA(d_model=configs.d_model, n_heads=configs.n_heads,  d_llm=self.d_llm, q_lora_rank=configs.q_lora_rank, kv_lora_rank=configs.kv_lora_rank)
             print(f'ReprogrammingLayer using MLA......')
         else:
             print(f'wrong type of attention mechanism in ReprogrammingLayer')
