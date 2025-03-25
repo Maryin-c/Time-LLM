@@ -14,6 +14,8 @@ import random
 import numpy as np
 import os
 
+import wandb
+
 os.environ['CURL_CA_BUNDLE'] = ''
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
 
@@ -102,6 +104,12 @@ args = parser.parse_args()
 ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
 deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero2.json')
 accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspeed_plugin)
+
+wandb.login(key="d8a57853232ad9c5337ec726db40457ebbf81f1a")
+run = wandb.init(
+    # Set the wandb project where this run will be logged.
+    project="long-term-patch-test",
+)
 
 for ii in range(args.itr):
     # setting record of experiments
@@ -237,6 +245,8 @@ for ii in range(args.itr):
                 adjust_learning_rate(accelerator, model_optim, scheduler, epoch + 1, args, printout=False)
                 scheduler.step()
 
+            run.log({"loss": loss.item()})
+
         accelerator.print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
         train_loss = np.average(train_loss)
         vali_loss, vali_mae_loss = vali(args, accelerator, model, vali_data, vali_loader, criterion, mae_metric)
@@ -244,6 +254,13 @@ for ii in range(args.itr):
         accelerator.print(
             "Epoch: {0} | Train Loss: {1:.7f} Vali Loss: {2:.7f} Test Loss: {3:.7f} MAE Loss: {4:.7f}".format(
                 epoch + 1, train_loss, vali_loss, test_loss, test_mae_loss))
+
+        run.log({
+            "Train Loss": train_loss, 
+            "Vali Loss": vali_loss,
+            "Test Loss": test_loss,
+            "MAE Loss": test_mae_loss,
+            })
 
         early_stopping(vali_loss, model, path)
         if early_stopping.early_stop:
@@ -262,6 +279,8 @@ for ii in range(args.itr):
 
         else:
             accelerator.print('Updating learning rate to {}'.format(scheduler.get_last_lr()[0]))
+
+run.finish()
 
 accelerator.wait_for_everyone()
 if accelerator.is_local_main_process:
