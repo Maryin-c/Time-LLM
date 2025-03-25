@@ -197,7 +197,7 @@ class PatchEmbedding(nn.Module):
         # dynamic position encoding
         seq_len = x.size(1)
         pos = self.position_embedding.pe[:, :seq_len]
-        print(f"x.shape: {x.shape}, pos.shape: {pos.shape}", flush=True)
+        # print(f"x.shape: {x.shape}, pos.shape: {pos.shape}", flush=True)
         x = x + pos
         return self.dropout(x), n_vars
 
