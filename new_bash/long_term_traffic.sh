@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=time_llm_test
-#SBATCH --output=./res/long_term_traffic_res.txt
-#SBATCH --error=./res/long_term_traffic_error.txt
+#SBATCH --output=./res/long_term_traffic_else_res.txt
+#SBATCH --error=./res/long_term_traffic_else_error.txt
 #SBATCH --time=120:00:00
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=256G

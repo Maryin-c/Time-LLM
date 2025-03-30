@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=time_llm_test
-#SBATCH --output=./res/long_term_weather_res.txt
-#SBATCH --error=./res/long_term_weather_error.txt
+#SBATCH --output=./res/long_term_weather_else_res.txt
+#SBATCH --error=./res/long_term_weather_else_error.txt
 #SBATCH --time=120:00:00
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=64G
@@ -49,7 +49,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
   --train_epochs $train_epochs \
-  --model_comment $comment
+  --model_comment $comment \
+  --prompt_domain 1
 
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
@@ -75,7 +76,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
   --train_epochs $train_epochs \
-  --model_comment $comment
+  --model_comment $comment \
+  --prompt_domain 1
 
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
@@ -101,7 +103,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
   --train_epochs $train_epochs \
-  --model_comment $comment
+  --model_comment $comment \
+  --prompt_domain 1
 
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
@@ -127,4 +130,5 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
   --train_epochs $train_epochs \
-  --model_comment $comment
+  --model_comment $comment \
+  --prompt_domain 1
