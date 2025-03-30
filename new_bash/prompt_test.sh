@@ -23,6 +23,7 @@ batch_size=8
 d_model=32
 d_ff=128
 
+comment='TimeLLM-ETTh1'
 
 #########################################
 accelerate launch --mixed_precision bf16 run_main.py \
