@@ -126,7 +126,8 @@ for ii in range(args.itr):
     train_data, train_loader = data_provider(args, args.data_pretrain, args.data_path_pretrain, True, 'train')
     vali_data, vali_loader = data_provider(args, args.data_pretrain, args.data_path_pretrain, True, 'val')
     test_data, test_loader = data_provider(args, args.data, args.data_path, False, 'test')
-
+    args.content = load_content(args)
+    print(args.content, flush=True)
     if args.model == 'Autoformer':
         model = Autoformer.Model(args).float()
     elif args.model == 'DLinear':
@@ -136,7 +137,7 @@ for ii in range(args.itr):
 
     path = os.path.join(args.checkpoints,
                         setting + '-' + args.model_comment)  # unique checkpoint saving path
-    args.content = load_content(args)
+    
     if not os.path.exists(path) and accelerator.is_local_main_process:
         os.makedirs(path)
 
@@ -266,5 +267,5 @@ for ii in range(args.itr):
 accelerator.wait_for_everyone()
 if accelerator.is_local_main_process:
     path = './checkpoints'  # unique checkpoint saving path
-    del_files(path)  # delete checkpoint files
+    #del_files(path)  # delete checkpoint files
     accelerator.print('success delete checkpoints')
