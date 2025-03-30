@@ -33,7 +33,7 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --data_path ETTh1.csv \
   --model_id ETTh1_512_192 \
   --model $model_name \
-  --data E_new \
+  --data ETTh1 \
   --features M \
   --seq_len 512 \
   --label_len 48 \
@@ -61,7 +61,7 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --data_path ETTh1.csv \
   --model_id ETTh1_512_720 \
   --model $model_name \
-  --data E_new \
+  --data ETTh1 \
   --features M \
   --seq_len 512 \
   --label_len 48 \
@@ -97,7 +97,7 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --data_path ETTh2.csv \
   --model_id ETTh2_512_192 \
   --model $model_name \
-  --data E_new \
+  --data ETTh2 \
   --features M \
   --seq_len 512 \
   --label_len 48 \
@@ -126,7 +126,7 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --data_path ETTh2.csv \
   --model_id ETTh2_512_720 \
   --model $model_name \
-  --data E_new \
+  --data ETTh2 \
   --features M \
   --seq_len 512 \
   --label_len 48 \
