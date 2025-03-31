@@ -253,6 +253,7 @@ class Model(nn.Module):
         self.word_embeddings = self.llm_model.get_input_embeddings().weight
         self.vocab_size = self.word_embeddings.shape[0]
         self.num_tokens = 1000
+        # 输入prompt+feature列编码后的长度，输出指定长度
         self.mapping_layer = nn.Linear(self.vocab_size, self.num_tokens)
 
         self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
@@ -275,19 +276,26 @@ class Model(nn.Module):
         return None
 
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
-
+        # feature列数标准化，此处为除去时间戳的所有列数，根据前面代码认为这里特征数应为1
         x_enc = self.normalize_layers(x_enc, 'norm')
-
+        # batch size B、时间步长T、特征数目N（根据前面认为为1）
         B, T, N = x_enc.size()
+        # permute重新排序维度，0 2 1原本为0 1 2，说明交换N与T的维度
+        # contiguous针对tensor改变维度后希望数据仍然能连续存储，改变一下物理位置
+        # reshape会把不同feature列，原本按feature分好类的列，现在统一放在一起1个类里
+        # 这里的结果就是生成总共feature列数作为行，总共步长作为列的二维矩阵
         x_enc = x_enc.permute(0, 2, 1).contiguous().reshape(B * N, T, 1)
 
+        # 这些最大最小值为每个feature列的最大最小，一共会有B * N个
         min_values = torch.min(x_enc, dim=1)[0]
         max_values = torch.max(x_enc, dim=1)[0]
         medians = torch.median(x_enc, dim=1).values
+        # 计算滞后值
         lags = self.calcute_lags(x_enc)
         trends = x_enc.diff(dim=1).sum(dim=1)
 
         prompt = []
+        # B * N个，针对每个feature列都要构造各自的prompt
         for b in range(x_enc.shape[0]):
             min_values_str = str(min_values[b].tolist()[0])
             max_values_str = str(max_values[b].tolist()[0])
@@ -308,16 +316,23 @@ class Model(nn.Module):
 
         # print(prompt, flush=True)
 
+        # 变回去了B T N，之前只是便于计算，回到normalize_layers处理后的结果
         x_enc = x_enc.reshape(B, N, T).permute(0, 2, 1).contiguous()
-
+        # pt是返回tensor格式，padding不足填充，truncation超长截断，最多2048个单词，input_ids仅取出token id，不要mask等其他结果
+        # prompt处理后应该为（B*N, 2048）
         prompt = self.tokenizer(prompt, return_tensors="pt", padding=True, truncation=True, max_length=2048).input_ids
+        # （B*N，2048）
         prompt_embeddings = self.llm_model.get_input_embeddings()(prompt.to(x_enc.device))  # (batch, prompt_token, dim)
 
+        # 像是固定值
         source_embeddings = self.mapping_layer(self.word_embeddings.permute(1, 0)).permute(1, 0)
 
+        # （B,N,T）
         x_enc = x_enc.permute(0, 2, 1).contiguous()
         enc_out, n_vars = self.patch_embedding(x_enc.to(torch.bfloat16))
+        # （B*N,T）
         enc_out = self.reprogramming_layer(enc_out, source_embeddings, source_embeddings)
+        # 按照T维度链接，即（B*N,?+T）
         llama_enc_out = torch.cat([prompt_embeddings, enc_out], dim=1)
         dec_out = self.llm_model(inputs_embeds=llama_enc_out).last_hidden_state
         dec_out = dec_out[:, :, :self.d_ff]

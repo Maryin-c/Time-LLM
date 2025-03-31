@@ -39,9 +39,9 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=2021, help='random seed')
 
     # data loader
-    parser.add_argument('--data', type=str, default='ETTh1', help='dataset type')
-    parser.add_argument('--root_path', type=str, default='./dataset/ETT-small/', help='root path of the data file')
-    parser.add_argument('--data_path', type=str, default='ETTh1.csv', help='data file')
+    parser.add_argument('--data', type=str, default='exchange-rate', help='dataset type')
+    parser.add_argument('--root_path', type=str, default='./dataset/exchange_rate/', help='root path of the data file')
+    parser.add_argument('--data_path', type=str, default='exchange_rate.csv', help='data file')
     parser.add_argument('--features', type=str, default='M',
                         help='forecasting task, options:[M, S, MS]; '
                             'M:multivariate predict multivariate, S: univariate predict univariate, '
@@ -175,41 +175,45 @@ if __name__ == '__main__':
         # if args.use_amp:
         #     scaler = torch.cuda.amp.GradScaler()
 
-        # for epoch in range(args.train_epochs):
-        #     iter_count = 0
-        #     train_loss = []
+        for epoch in range(args.train_epochs):
+            iter_count = 0
+            train_loss = []
 
-        #     # model.train()
-        #     epoch_time = time.time()
-        #     for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(enumerate(train_loader)):
-        #         iter_count += 1
-        #         # model_optim.zero_grad()
-        #         print("batch_x", batch_x)
-        #         print("batch_y", batch_y)
-        #         print("batch_x_mark", batch_x_mark)
-        #         print("batch_y_mark", batch_y_mark)
-        #         batch_x = batch_x.float()
-        #         print("batch_x", batch_x)
-        #         batch_y = batch_y.float()
-        #         print("batch_y", batch_y)
-        #         batch_x_mark = batch_x_mark.float()
-        #         print("batch_x_mark", batch_x_mark)
-        #         batch_y_mark = batch_y_mark.float()
-        #         print("batch_y_mark", batch_y_mark)
+            # model.train()
+            epoch_time = time.time()
+            for i, (batch_x, batch_y, batch_x_mark, batch_y_mark) in tqdm(enumerate(train_loader)):
+                iter_count += 1
+                print(batch_x.shape, batch_y.shape, batch_x_mark.shape, batch_y_mark.shape)
+                # model_optim.zero_grad()
+                # print("batch_x", batch_x)
+                # print("batch_y", batch_y)
+                # print("batch_x_mark", batch_x_mark)
+                # print("batch_y_mark", batch_y_mark)
+                batch_x = batch_x.float()
+                # print("batch_x", batch_x)
+                batch_y = batch_y.float()
+                # print("batch_y", batch_y)
+                batch_x_mark = batch_x_mark.float()
+                # print("batch_x_mark", batch_x_mark)
+                batch_y_mark = batch_y_mark.float()
+                # print("batch_y_mark", batch_y_mark)
 
-        #         # decoder input
-        #         dec_inp = torch.zeros_like(batch_y[:, -args.pred_len:, :]).float()
-        #         print("dec_inp", dec_inp)
-        #         dec_inp = torch.cat([batch_y[:, :args.label_len, :], dec_inp], dim=1).float()
-        #         print("dec_inp", dec_inp)
+                # decoder input
+                dec_inp = torch.zeros_like(batch_y[:, -args.pred_len:, :]).float()
+                print("dec_inp", dec_inp.shape)
+                dec_inp = torch.cat([batch_y[:, :args.label_len, :], dec_inp], dim=1).float()
+                print("dec_inp", dec_inp.shape)
 
-        #         f_dim = -1 if args.features == 'MS' else 0
-        #         batch_y = batch_y[:, -args.pred_len:, f_dim:]
-        #         print("batch_y", batch_y)
+                # 训练使用了x的完整时间戳与完整序列
+                # 训练结果预测输入为y的部分特征序列和完整时间戳，预测y的剩余特征序列，y的这部分特征序列还是与x尾部重叠的部分
+
+                f_dim = -1 if args.features == 'MS' else 0
+                batch_y = batch_y[:, -args.pred_len:, f_dim:]
+                print("batch_y", batch_y.shape)
                 
-        #         break
+                break
             
-        #     break
+            break
                 # # encoder - decoder
                 # if args.use_amp:
                 #     with torch.cuda.amp.autocast():
