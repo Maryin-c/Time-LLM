@@ -1,0 +1,188 @@
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:25<00:25, 25.64s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:34<00:00, 15.55s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:34<00:00, 17.06s/it]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_m4.py", line 224, in <module>
+    vali_loss = test(args, accelerator, model, train_loader, vali_loader, criterion)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_ttl/Time-LLM/utils/tools.py", line 210, in test
+    accelerator.wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/accelerator.py", line 2395, in wait_for_everyone
+    wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/other.py", line 118, in wait_for_everyone
+    PartialState().wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/state.py", line 421, in wait_for_everyone
+    torch.distributed.barrier()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py", line 3439, in barrier
+    work = default_pg.barrier(opts=opts)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclUnhandledCudaError: Call to CUDA function failed.
+Last error:
+Failed to CUDA calloc async 608 bytes
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_m4.py', '--task_name', 'short_term_forecast', '--is_training', '1', '--root_path', './dataset/m4', '--seasonal_patterns', 'Monthly', '--model_id', 'm4_Monthly', '--model', 'TimeLLM', '--data', 'm4', '--features', 'M', '--enc_in', '1', '--dec_in', '1', '--c_out', '1', '--llm_layers', '32', '--d_model', '8', '--d_ff', '32', '--patch_len', '1', '--stride', '1', '--batch_size', '8', '--des', 'Exp', '--itr', '1', '--learning_rate', '0.001', '--loss', 'SMAPE', '--train_epochs', '1', '--model_comment', 'TimeLLM-M4', '--prompt_domain', '1']' returned non-zero exit status 1.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.69s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.00s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.25s/it]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_m4.py", line 244, in <module>
+    unwrapped_model.load_state_dict(torch.load(best_model_path, map_location=lambda storage, loc: storage))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/serialization.py", line 998, in load
+    with _open_file_like(f, 'rb') as opened_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/serialization.py", line 445, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/serialization.py", line 426, in __init__
+    super().__init__(open(name, mode))
+                     ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './checkpoints/short_term_forecast_m4_Yearly_TimeLLM_m4_ftM_sl96_ll48_pl96_dm8_nh8_el2_dl1_df32_fc1_ebtimeF_Exp_0-TimeLLM-M4/checkpoint'
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_m4.py', '--task_name', 'short_term_forecast', '--is_training', '1', '--root_path', './dataset/m4', '--seasonal_patterns', 'Yearly', '--model_id', 'm4_Yearly', '--model', 'TimeLLM', '--data', 'm4', '--features', 'M', '--enc_in', '1', '--dec_in', '1', '--c_out', '1', '--llm_layers', '32', '--d_model', '8', '--d_ff', '32', '--patch_len', '1', '--stride', '1', '--batch_size', '8', '--des', 'Exp', '--itr', '1', '--learning_rate', '0.001', '--loss', 'SMAPE', '--train_epochs', '1', '--model_comment', 'TimeLLM-M4', '--prompt_domain', '1']' returned non-zero exit status 1.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.25s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.26s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.41s/it]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_m4.py", line 224, in <module>
+    vali_loss = test(args, accelerator, model, train_loader, vali_loader, criterion)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_ttl/Time-LLM/utils/tools.py", line 210, in test
+    accelerator.wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/accelerator.py", line 2395, in wait_for_everyone
+    wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/other.py", line 118, in wait_for_everyone
+    PartialState().wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/state.py", line 421, in wait_for_everyone
+    torch.distributed.barrier()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py", line 3439, in barrier
+    work = default_pg.barrier(opts=opts)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclUnhandledCudaError: Call to CUDA function failed.
+Last error:
+Failed to CUDA calloc async 4 bytes
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_m4.py', '--task_name', 'short_term_forecast', '--is_training', '1', '--root_path', './dataset/m4', '--seasonal_patterns', 'Weekly', '--model_id', 'm4_Weekly', '--model', 'TimeLLM', '--data', 'm4', '--features', 'M', '--enc_in', '1', '--dec_in', '1', '--c_out', '1', '--llm_layers', '32', '--d_model', '8', '--d_ff', '32', '--patch_len', '1', '--stride', '1', '--batch_size', '8', '--des', 'Exp', '--itr', '1', '--learning_rate', '0.001', '--loss', 'SMAPE', '--train_epochs', '1', '--model_comment', 'TimeLLM-M4', '--prompt_domain', '1']' returned non-zero exit status 1.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.29s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.28s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.44s/it]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_m4.py", line 224, in <module>
+    vali_loss = test(args, accelerator, model, train_loader, vali_loader, criterion)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_ttl/Time-LLM/utils/tools.py", line 210, in test
+    accelerator.wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/accelerator.py", line 2395, in wait_for_everyone
+    wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/other.py", line 118, in wait_for_everyone
+    PartialState().wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/state.py", line 421, in wait_for_everyone
+    torch.distributed.barrier()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py", line 3439, in barrier
+    work = default_pg.barrier(opts=opts)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclUnhandledCudaError: Call to CUDA function failed.
+Last error:
+Failed to CUDA calloc async 4 bytes
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_m4.py', '--task_name', 'short_term_forecast', '--is_training', '1', '--root_path', './dataset/m4', '--seasonal_patterns', 'Daily', '--model_id', 'm4_Daily', '--model', 'TimeLLM', '--data', 'm4', '--features', 'M', '--enc_in', '1', '--dec_in', '1', '--c_out', '1', '--llm_layers', '32', '--d_model', '8', '--d_ff', '32', '--patch_len', '1', '--stride', '1', '--batch_size', '8', '--des', 'Exp', '--itr', '1', '--learning_rate', '0.001', '--loss', 'SMAPE', '--train_epochs', '1', '--model_comment', 'TimeLLM-M4', '--prompt_domain', '1']' returned non-zero exit status 1.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:03<00:03,  3.18s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  1.83s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:04<00:00,  2.03s/it]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_m4.py", line 224, in <module>
+    vali_loss = test(args, accelerator, model, train_loader, vali_loader, criterion)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_ttl/Time-LLM/utils/tools.py", line 210, in test
+    accelerator.wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/accelerator.py", line 2395, in wait_for_everyone
+    wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/other.py", line 118, in wait_for_everyone
+    PartialState().wait_for_everyone()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/state.py", line 421, in wait_for_everyone
+    torch.distributed.barrier()
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py", line 3439, in barrier
+    work = default_pg.barrier(opts=opts)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclUnhandledCudaError: Call to CUDA function failed.
+Last error:
+Failed to CUDA calloc async 608 bytes
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_m4.py', '--task_name', 'short_term_forecast', '--is_training', '1', '--root_path', './dataset/m4', '--seasonal_patterns', 'Quarterly', '--model_id', 'm4_Quarterly', '--model', 'TimeLLM', '--data', 'm4', '--features', 'M', '--enc_in', '1', '--dec_in', '1', '--c_out', '1', '--llm_layers', '32', '--d_model', '8', '--d_ff', '32', '--patch_len', '1', '--stride', '1', '--batch_size', '8', '--des', 'Exp', '--itr', '1', '--learning_rate', '0.001', '--loss', 'SMAPE', '--train_epochs', '1', '--model_comment', 'TimeLLM-M4', '--prompt_domain', '1']' returned non-zero exit status 1.
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.27s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.28s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:02<00:00,  1.42s/it]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_m4.py", line 244, in <module>
+    unwrapped_model.load_state_dict(torch.load(best_model_path, map_location=lambda storage, loc: storage))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/serialization.py", line 998, in load
+    with _open_file_like(f, 'rb') as opened_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/serialization.py", line 445, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/serialization.py", line 426, in __init__
+    super().__init__(open(name, mode))
+                     ^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: './checkpoints/short_term_forecast_m4_Hourly_TimeLLM_m4_ftM_sl96_ll48_pl96_dm8_nh8_el2_dl1_df32_fc1_ebtimeF_Exp_0-TimeLLM-M4/checkpoint'
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_m4.py', '--task_name', 'short_term_forecast', '--is_training', '1', '--root_path', './dataset/m4', '--seasonal_patterns', 'Hourly', '--model_id', 'm4_Hourly', '--model', 'TimeLLM', '--data', 'm4', '--features', 'M', '--enc_in', '1', '--dec_in', '1', '--c_out', '1', '--llm_layers', '32', '--d_model', '8', '--d_ff', '32', '--patch_len', '1', '--stride', '1', '--batch_size', '8', '--des', 'Exp', '--itr', '1', '--learning_rate', '0.001', '--loss', 'SMAPE', '--train_epochs', '1', '--model_comment', 'TimeLLM-M4', '--prompt_domain', '1']' returned non-zero exit status 1.

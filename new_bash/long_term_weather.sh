@@ -15,7 +15,7 @@ conda activate timellm
 model_name=TimeLLM
 train_epochs=1
 learning_rate=0.01
-llama_layers=32
+llama_layers=10
 
 #master_port=25000
 #num_process=2
