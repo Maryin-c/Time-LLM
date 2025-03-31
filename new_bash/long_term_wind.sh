@@ -13,7 +13,7 @@ source ../../miniconda3/etc/profile.d/conda.sh
 conda activate timellm
 
 model_name=TimeLLM
-train_epochs=1
+train_epochs=6
 learning_rate=0.01
 llama_layers=32
 
