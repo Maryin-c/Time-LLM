@@ -42,7 +42,7 @@ accelerate launch --mixed_precision bf16 run_m4.py \
   --d_ff $d_ff \
   --patch_len 1 \
   --stride 1 \
-  --batch_size $batch_size \
+  --batch_size 4 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate $learning_rate \
@@ -94,7 +94,7 @@ accelerate launch --mixed_precision bf16 run_m4.py \
   --d_ff $d_ff \
   --patch_len 1 \
   --stride 1 \
-  --batch_size $batch_size \
+  --batch_size 4 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate $learning_rate \
@@ -120,7 +120,7 @@ accelerate launch --mixed_precision bf16 run_m4.py \
   --d_ff $d_ff \
   --patch_len 1 \
   --stride 1 \
-  --batch_size $batch_size \
+  --batch_size 4 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate $learning_rate \
@@ -146,7 +146,7 @@ accelerate launch --mixed_precision bf16 run_m4.py \
   --d_ff $d_ff \
   --patch_len 1 \
   --stride 1 \
-  --batch_size $batch_size \
+  --batch_size 4 \
   --des 'Exp' \
   --itr 1 \
   --learning_rate $learning_rate \
