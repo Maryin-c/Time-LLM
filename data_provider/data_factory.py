@@ -12,6 +12,8 @@ data_dict = {
     'Weather': Dataset_Custom,
     'm4': Dataset_M4,
     'exchange_rate': Dataset_No_Time,
+    'national_illness': Dataset_No_Time,
+    'wind': Dataset_No_Time,
 }
 
 
