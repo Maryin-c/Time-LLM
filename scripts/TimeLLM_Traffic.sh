@@ -93,8 +93,8 @@ accelerate launch --multi_gpu --mixed_precision bf16 --num_processes $num_proces
   --data Traffic \
   --features M \
   --seq_len 512 \
-  --label_len 720 \
-  --pred_len 96 \
+  --label_len 96 \
+  --pred_len 720 \
   --e_layers 2 \
   --d_layers 1 \
   --factor 3 \

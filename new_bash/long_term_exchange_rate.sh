@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=time_llm_test
-#SBATCH --output=./res/long_term_traffic_else_res.txt
-#SBATCH --error=./res/long_term_traffic_else_error.txt
+#SBATCH --job-name=exchange
+#SBATCH --output=./res/exchange_rate_res.txt
+#SBATCH --error=./res/exchange_rate_error.txt
 #SBATCH --time=120:00:00
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=256G
@@ -13,36 +13,33 @@ source ../../miniconda3/etc/profile.d/conda.sh
 conda activate timellm
 
 model_name=TimeLLM
-train_epochs=1
+train_epochs=10
 learning_rate=0.01
-llama_layers=10
+llama_layers=32
 
 #master_port=25000
 #num_process=2
-batch_size=8
+batch_size=32
 d_model=16
 d_ff=32
 
-comment='TimeLLM-Traffic'
+comment='TimeLLM-exchange_rate'
 
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/traffic/ \
-  --data_path traffic.csv \
-  --model_id traffic_512_96 \
+  --root_path ./dataset/exchange_rate/ \
+  --data_path exchange_rate.csv \
+  --model_id exchange_rate \
   --model $model_name \
-  --data Traffic \
+  --data exchange_rate \
   --features M \
   --seq_len 512 \
   --label_len 48 \
   --pred_len 96 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --enc_in 862 \
-  --dec_in 862 \
-  --c_out 862 \
+  --enc_in 8 \
+  --dec_in 8 \
+  --c_out 8 \
   --batch_size $batch_size \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
@@ -53,21 +50,18 @@ accelerate launch --mixed_precision bf16 run_main.py \
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/traffic/ \
-  --data_path traffic.csv \
-  --model_id traffic_512_96 \
+  --root_path ./dataset/exchange_rate/ \
+  --data_path exchange_rate.csv \
+  --model_id exchange_rate \
   --model $model_name \
-  --data Traffic \
+  --data exchange_rate \
   --features M \
   --seq_len 512 \
   --label_len 48 \
-  --pred_len 192 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --enc_in 862 \
-  --dec_in 862 \
-  --c_out 862 \
+  --pred_len 168 \
+  --enc_in 8 \
+  --dec_in 8 \
+  --c_out 8 \
   --batch_size $batch_size \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
@@ -78,21 +72,18 @@ accelerate launch --mixed_precision bf16 run_main.py \
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/traffic/ \
-  --data_path traffic.csv \
-  --model_id traffic_512_96 \
+  --root_path ./dataset/exchange_rate/ \
+  --data_path exchange_rate.csv \
+  --model_id exchange_rate \
   --model $model_name \
-  --data Traffic \
+  --data exchange_rate \
   --features M \
   --seq_len 512 \
   --label_len 48 \
   --pred_len 336 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --enc_in 862 \
-  --dec_in 862 \
-  --c_out 862 \
+  --enc_in 8 \
+  --dec_in 8 \
+  --c_out 8 \
   --batch_size $batch_size \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
@@ -103,21 +94,18 @@ accelerate launch --mixed_precision bf16 run_main.py \
 accelerate launch --mixed_precision bf16 run_main.py \
   --task_name long_term_forecast \
   --is_training 1 \
-  --root_path ./dataset/traffic/ \
-  --data_path traffic.csv \
-  --model_id traffic_512_96 \
+  --root_path ./dataset/exchange_rate/ \
+  --data_path exchange_rate.csv \
+  --model_id exchange_rate \
   --model $model_name \
-  --data Traffic \
+  --data exchange_rate \
   --features M \
   --seq_len 512 \
   --label_len 48 \
-  --pred_len 720 \
-  --e_layers 2 \
-  --d_layers 1 \
-  --factor 3 \
-  --enc_in 862 \
-  --dec_in 862 \
-  --c_out 862 \
+  --pred_len 672 \
+  --enc_in 8 \
+  --dec_in 8 \
+  --c_out 8 \
   --batch_size $batch_size \
   --learning_rate $learning_rate \
   --llm_layers $llama_layers \
