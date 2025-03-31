@@ -108,7 +108,7 @@ accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspe
 wandb.login(key="d8a57853232ad9c5337ec726db40457ebbf81f1a")
 run = wandb.init(
     # Set the wandb project where this run will be logged.
-    project="long-term-extend-exchange-rate",
+    project="long-term-extend-{}".format(args.data),
     # Track hyperparameters and run metadata.
     config={
         "data": args.data,
