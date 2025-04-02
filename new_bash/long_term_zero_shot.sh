@@ -4,8 +4,8 @@
 #SBATCH --output=./res/zero_shot_res.txt
 #SBATCH --error=./res/zero_shot_error.txt
 #SBATCH --time=120:00:00
-#SBATCH --gres=gpu:h100-47:1
-#SBATCH --mem=256G
+#SBATCH --gres=gpu:h100-96:1
+#SBATCH --mem=64G
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=e1350606@u.nus.edu
 
