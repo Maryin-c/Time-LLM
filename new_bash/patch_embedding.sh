@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name=patch_embedding
-#SBATCH --output=./res/patch_embedding_res.txt
-#SBATCH --error=./res/patch_embedding_error.txt
+#SBATCH --output=./res/patch_embedding_else_res.txt
+#SBATCH --error=./res/patch_embedding_else_error.txt
 #SBATCH --time=120:00:00
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=256G
