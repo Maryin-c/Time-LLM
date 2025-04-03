@@ -1,0 +1,58 @@
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:20<00:20, 20.52s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:20<00:00,  8.57s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:20<00:00, 10.37s/it]
+0it [00:00, ?it/s]0it [00:01, ?it/s]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_ttl/Time-LLM/run_pretrain.py", line 243, in <module>
+    vali_loss, vali_mae_loss = vali(args, accelerator, model, vali_data, vali_loader, criterion, mae_metric)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_ttl/Time-LLM/utils/tools.py", line 166, in vali
+    outputs, batch_y = accelerator.gather_for_metrics((outputs, batch_y))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/accelerator.py", line 2242, in gather_for_metrics
+    data = self.gather(input_data)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/accelerator.py", line 2205, in gather
+    return gather(tensor)
+           ^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 378, in wrapper
+    return function(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 439, in gather
+    return _gpu_gather(tensor)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 358, in _gpu_gather
+    return recursively_apply(_gpu_gather_one, tensor, error_on_other_type=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 107, in recursively_apply
+    return honor_type(
+           ^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 81, in honor_type
+    return type(obj)(generator)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 110, in <genexpr>
+    recursively_apply(
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 126, in recursively_apply
+    return func(data, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/utils/operations.py", line 355, in _gpu_gather_one
+    torch.distributed.all_gather(output_tensors, tensor)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/c10d_logger.py", line 72, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py", line 2615, in all_gather
+    work = default_pg.allgather([tensor_list], [tensor])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.distributed.DistBackendError: NCCL error in: ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1691, unhandled cuda error (run with NCCL_DEBUG=INFO for details), NCCL version 2.19.3
+ncclUnhandledCudaError: Call to CUDA function failed.
+Last error:
+Failed to CUDA calloc async 608 bytes
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_pretrain.py', '--task_name', 'long_term_forecast', '--is_training', '1', '--root_path', './dataset/ETT-small/', '--data_path_pretrain', 'ETTh1.csv', '--data_path', 'ETTh2.csv', '--model_id', 'ETTh1_ETTh2_512_192', '--model', 'TimeLLM', '--data_pretrain', 'ETTh1', '--data', 'ETTh2', '--features', 'M', '--seq_len', '512', '--label_len', '48', '--pred_len', '192', '--factor', '3', '--enc_in', '7', '--dec_in', '7', '--c_out', '7', '--des', 'Exp', '--itr', '1', '--d_model', '32', '--d_ff', '128', '--batch_size', '4', '--learning_rate', '0.01', '--llm_layers', '16', '--train_epochs', '5', '--model_comment', 'TimeLLM-ETTh1_ETTh2', '--prompt_domain', '1']' returned non-zero exit status 1.

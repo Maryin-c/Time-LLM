@@ -4,8 +4,8 @@
 #SBATCH --output=./res/zero_shot_720_res.txt
 #SBATCH --error=./res/zero_shot_720_error.txt
 #SBATCH --time=120:00:00
-#SBATCH --gres=gpu:h100-96:1
-#SBATCH --mem=64G
+#SBATCH --gres=gpu:h100-47:1
+#SBATCH --mem=128G
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=e1350606@u.nus.edu
 
@@ -14,7 +14,7 @@ conda activate timellm
 
 model_name=TimeLLM
 learning_rate=0.01
-llama_layers=16
+llama_layers=10
 
 #master_port=25000
 #num_process=2
