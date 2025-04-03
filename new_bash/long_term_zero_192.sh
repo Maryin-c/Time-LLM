@@ -14,11 +14,11 @@ conda activate timellm
 
 model_name=TimeLLM
 learning_rate=0.01
-llama_layers=16
+llama_layers=10
 
 #master_port=25000
 #num_process=2
-batch_size=4
+batch_size=2
 d_model=32
 d_ff=128
 

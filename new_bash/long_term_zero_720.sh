@@ -5,7 +5,7 @@
 #SBATCH --error=./res/zero_shot_720_error.txt
 #SBATCH --time=120:00:00
 #SBATCH --gres=gpu:h100-47:1
-#SBATCH --mem=128G
+#SBATCH --mem=64G
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=e1350606@u.nus.edu
 
@@ -18,7 +18,7 @@ llama_layers=10
 
 #master_port=25000
 #num_process=2
-batch_size=4
+batch_size=2
 d_model=32
 d_ff=128
 
