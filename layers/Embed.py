@@ -32,7 +32,10 @@ def rotate_half(x):
     return torch.cat((-x2, x1), dim=-1)
 
 def apply_rope(x, sin, cos):
-    return (x * cos) + (rotate_half(x) * sin)
+    x1, x2 = x.chunk(2, dim=-1)
+    part1 = x1 * cos - x2 * sin
+    part2 = x2 * cos + x1 * sin
+    return torch.cat((part1, part2), dim=-1)
 
 class RotaryPositionalEmbedding(nn.Module):
     def __init__(self, d_model, max_seq_len=512):
