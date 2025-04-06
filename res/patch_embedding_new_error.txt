@@ -1,0 +1,121 @@
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Appending key for api.wandb.ai to your netrc file: /home/e/e1350606/.netrc
+wandb: Currently logged in as: 3317701822 (3317701822-national-university-of-singapore) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: creating run
+wandb: Tracking run with wandb version 0.19.8
+wandb: Run data is saved locally in /home/e/e1350606/time_patch/Time-LLM/wandb/run-20250406_224924-0yopo62p
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run andorian-resistance-5
+wandb: ⭐️ View project at https://wandb.ai/3317701822-national-university-of-singapore/long-term-patch-test
+wandb: 🚀 View run at https://wandb.ai/3317701822-national-university-of-singapore/long-term-patch-test/runs/0yopo62p
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:26<00:26, 26.84s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:35<00:00, 16.35s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:35<00:00, 17.92s/it]
+0it [00:00, ?it/s]0it [00:01, ?it/s]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_patch/Time-LLM/run_main.py", line 219, in <module>
+    outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/deepspeed/utils/nvtx.py", line 15, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/deepspeed/runtime/engine.py", line 1852, in forward
+    loss = self.module(*inputs, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_patch/Time-LLM/models/TimeLLM.py", line 267, in forward
+    dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_patch/Time-LLM/models/TimeLLM.py", line 312, in forecast
+    enc_out = self.reprogramming_layer(enc_out, source_embeddings, source_embeddings)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_patch/Time-LLM/models/TimeLLM.py", line 352, in forward
+    B, L, _ = target_embedding.shape
+    ^^^^^^^
+ValueError: too many values to unpack (expected 3)
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_main.py', '--task_name', 'long_term_forecast', '--is_training', '1', '--root_path', './dataset/ETT-small/', '--data_path', 'ETTh1.csv', '--model_id', 'ETTh1_512_192', '--model', 'TimeLLM', '--data', 'ETTh1', '--features', 'M', '--seq_len', '512', '--label_len', '48', '--pred_len', '192', '--factor', '3', '--enc_in', '7', '--dec_in', '7', '--c_out', '7', '--des', 'Exp', '--itr', '1', '--d_model', '32', '--d_ff', '128', '--batch_size', '8', '--learning_rate', '0.02', '--llm_layers', '32', '--train_epochs', '10', '--model_comment', 'TimeLLM-ETTh1']' returned non-zero exit status 1.
+wandb: Using wandb-core as the SDK backend.  Please refer to https://wandb.me/wandb-core for more information.
+wandb: Appending key for api.wandb.ai to your netrc file: /home/e/e1350606/.netrc
+wandb: Currently logged in as: 3317701822 (3317701822-national-university-of-singapore) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.19.8
+wandb: Run data is saved locally in /home/e/e1350606/time_patch/Time-LLM/wandb/run-20250406_225056-a2o4dfrx
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run bajoran-daedalus-6
+wandb: ⭐️ View project at https://wandb.ai/3317701822-national-university-of-singapore/long-term-patch-test
+wandb: 🚀 View run at https://wandb.ai/3317701822-national-university-of-singapore/long-term-patch-test/runs/a2o4dfrx
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:02<00:02,  2.63s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.51s/it]Loading checkpoint shards: 100%|██████████| 2/2 [00:03<00:00,  1.67s/it]
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+Traceback (most recent call last):
+  File "/home/e/e1350606/time_patch/Time-LLM/run_main.py", line 219, in <module>
+    outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/deepspeed/utils/nvtx.py", line 15, in wrapped_fn
+    ret_val = func(*args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/deepspeed/runtime/engine.py", line 1852, in forward
+    loss = self.module(*inputs, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_patch/Time-LLM/models/TimeLLM.py", line 267, in forward
+    dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_patch/Time-LLM/models/TimeLLM.py", line 312, in forecast
+    enc_out = self.reprogramming_layer(enc_out, source_embeddings, source_embeddings)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/e/e1350606/time_patch/Time-LLM/models/TimeLLM.py", line 352, in forward
+    B, L, _ = target_embedding.shape
+    ^^^^^^^
+ValueError: too many values to unpack (expected 3)
+Traceback (most recent call last):
+  File "/home/e/e1350606/miniconda3/envs/timellm/bin/accelerate", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/accelerate_cli.py", line 46, in main
+    args.func(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 1057, in launch_command
+    simple_launcher(args)
+  File "/home/e/e1350606/miniconda3/envs/timellm/lib/python3.11/site-packages/accelerate/commands/launch.py", line 673, in simple_launcher
+    raise subprocess.CalledProcessError(returncode=process.returncode, cmd=cmd)
+subprocess.CalledProcessError: Command '['/home/e/e1350606/miniconda3/envs/timellm/bin/python', 'run_main.py', '--task_name', 'long_term_forecast', '--is_training', '1', '--root_path', './dataset/ETT-small/', '--data_path', 'ETTh1.csv', '--model_id', 'ETTh1_512_720', '--model', 'TimeLLM', '--data', 'ETTh1', '--features', 'M', '--seq_len', '512', '--label_len', '48', '--pred_len', '720', '--factor', '3', '--enc_in', '7', '--dec_in', '7', '--c_out', '7', '--des', 'Exp', '--itr', '1', '--d_model', '32', '--d_ff', '128', '--batch_size', '8', '--learning_rate', '0.01', '--llm_layers', '32', '--train_epochs', '10', '--model_comment', 'TimeLLM-ETTh1']' returned non-zero exit status 1.

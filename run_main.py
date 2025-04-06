@@ -273,6 +273,8 @@ for ii in range(args.itr):
 
             run.log({"loss": loss.item()})
 
+            run.log({"loss": loss.item()})
+
         accelerator.print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
         train_loss = np.average(train_loss)
         vali_loss, vali_mae_loss = vali(args, accelerator, model, vali_data, vali_loader, criterion, mae_metric)
@@ -281,6 +283,13 @@ for ii in range(args.itr):
             "Epoch: {0} | Train Loss: {1:.7f} Vali Loss: {2:.7f} Test Loss: {3:.7f} MAE Loss: {4:.7f}".format(
                 epoch + 1, train_loss, vali_loss, test_loss, test_mae_loss))
         
+        run.log({
+            "Train Loss": train_loss, 
+            "Vali Loss": vali_loss,
+            "Test Loss": test_loss,
+            "MAE Loss": test_mae_loss,
+            })
+
         run.log({
             "Train Loss": train_loss, 
             "Vali Loss": vali_loss,
