@@ -212,10 +212,9 @@ class PatchEmbedding(nn.Module):
         x = torch.reshape(x, (x.shape[0] * x.shape[1], x.shape[2], x.shape[3]))
         # Input encoding
         x = self.value_embedding(x)
-        print(">>> Before PE", x.shape)
         # dynamic position encoding
         x = self.position_embedding(x)
-        print(">>> After PE", x.shape)
+        x = x.squeeze(0)
         # seq_len = x.size(1)
         # pos = self.position_embedding.pe[:, :seq_len]
         # x = x + pos
