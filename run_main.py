@@ -127,6 +127,7 @@ run = wandb.init(
         "window_size": args.window_size,
     },
 )
+
 for ii in range(args.itr):
     # setting record of experiments
     setting = '{}_{}_{}_{}_ft{}_sl{}_ll{}_pl{}_dm{}_nh{}_el{}_dl{}_df{}_fc{}_eb{}_{}_{}'.format(
@@ -267,6 +268,8 @@ for ii in range(args.itr):
             if args.lradj == 'TST':
                 adjust_learning_rate(accelerator, model_optim, scheduler, epoch + 1, args, printout=False)
                 scheduler.step()
+            
+            run.log({"loss": loss.item()})
 
             run.log({"loss": loss.item()})
 
@@ -291,7 +294,7 @@ for ii in range(args.itr):
             "Test Loss": test_loss,
             "MAE Loss": test_mae_loss,
             })
-        
+
         early_stopping(vali_loss, model, path)
         if early_stopping.early_stop:
             accelerator.print("Early stopping")

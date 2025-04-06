@@ -245,6 +245,8 @@ class Model(nn.Module):
         
         print(self.description, flush=True)
 
+        print(self.description, flush=True)
+
         self.dropout = nn.Dropout(configs.dropout)
 
         self.patch_embedding = PatchEmbedding(
