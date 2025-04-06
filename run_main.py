@@ -101,7 +101,6 @@ parser.add_argument('--llm_layers', type=int, default=6)
 parser.add_argument('--percent', type=int, default=100)
 
 
-
 # wxq add for attention
 # choices: mha, mqa, gqa, mla
 parser.add_argument('--attn_type', type=str, default='mha', help='attention type of ReprogrammingLayer')
@@ -109,6 +108,7 @@ parser.add_argument('--n_groups', type=int, default=4, help='head groups for GQA
 
 parser.add_argument('--q_lora_rank', type=int, default=16, help='q_lora_rank in mla')
 parser.add_argument('--kv_lora_rank', type=int, default=16, help='kv_lora_rank in mla')
+parser.add_argument('--window_size', type=int, default=3, help='revised attention window size')
 
 args = parser.parse_args()
 ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
@@ -124,9 +124,9 @@ run = wandb.init(
         "data": args.data,
         "pred_len": args.pred_len,
         "attn": args.attn_type,
+        "window_size": args.window_size,
     },
 )
-
 for ii in range(args.itr):
     # setting record of experiments
     setting = '{}_{}_{}_{}_ft{}_sl{}_ll{}_pl{}_dm{}_nh{}_el{}_dl{}_df{}_fc{}_eb{}_{}_{}'.format(
@@ -277,6 +277,13 @@ for ii in range(args.itr):
         accelerator.print(
             "Epoch: {0} | Train Loss: {1:.7f} Vali Loss: {2:.7f} Test Loss: {3:.7f} MAE Loss: {4:.7f}".format(
                 epoch + 1, train_loss, vali_loss, test_loss, test_mae_loss))
+        
+        run.log({
+            "Train Loss": train_loss, 
+            "Vali Loss": vali_loss,
+            "Test Loss": test_loss,
+            "MAE Loss": test_mae_loss,
+            })
 
         run.log({
             "Train Loss": train_loss, 

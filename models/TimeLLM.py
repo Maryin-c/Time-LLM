@@ -255,23 +255,23 @@ class Model(nn.Module):
         self.num_tokens = 1000
         self.mapping_layer = nn.Linear(self.vocab_size, self.num_tokens)
 
+        # if configs.attn_type == 'mha':
+        #     print(f'ReprogrammingLayer using MHA......')
+        #     self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
+        # elif configs.attn_type == 'mqa':
+        #     print(f'ReprogrammingLayer using MQA......')
+        #     self.reprogramming_layer = ReprogrammingLayer_MQA(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
+        # elif configs.attn_type == 'GQA':
+        #     print(f'ReprogrammingLayer using GQA......')
+        #     self.reprogramming_layer = ReprogrammingLayer_GQA(configs.d_model, configs.n_heads, configs.n_groups, self.d_ff, self.d_llm)
+        # elif configs.attn_type == 'mla':
+        #     self.reprogramming_layer = ReprogrammingLayer_MLA(d_model=configs.d_model, n_heads=configs.n_heads,  d_llm=self.d_llm, q_lora_rank=configs.q_lora_rank, kv_lora_rank=configs.kv_lora_rank)
+        #     print(f'ReprogrammingLayer using MLA......')
+        # else:
+        #     print(f'wrong type of attention mechanism in ReprogrammingLayer')
+        #     exit()
 
-        if configs.attn_type == 'mha':
-            print(f'ReprogrammingLayer using MHA......')
-            self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
-        elif configs.attn_type == 'mqa':
-            print(f'ReprogrammingLayer using MQA......')
-            self.reprogramming_layer = ReprogrammingLayer_MQA(configs.d_model, configs.n_heads, self.d_ff, self.d_llm)
-        elif configs.attn_type == 'GQA':
-            print(f'ReprogrammingLayer using GQA......')
-            self.reprogramming_layer = ReprogrammingLayer_GQA(configs.d_model, configs.n_heads, configs.n_groups, self.d_ff, self.d_llm)
-        elif configs.attn_type == 'mla':
-            self.reprogramming_layer = ReprogrammingLayer_MLA(d_model=configs.d_model, n_heads=configs.n_heads,  d_llm=self.d_llm, q_lora_rank=configs.q_lora_rank, kv_lora_rank=configs.kv_lora_rank)
-            print(f'ReprogrammingLayer using MLA......')
-        else:
-            print(f'wrong type of attention mechanism in ReprogrammingLayer')
-            exit()
-
+        self.reprogramming_layer = ReprogrammingLayer(configs.d_model, configs.n_heads, configs.window_size, self.d_ff, self.d_llm)
 
         self.patch_nums = int((configs.seq_len - self.patch_len) / self.stride + 2)
         self.head_nf = self.d_ff * self.patch_nums
@@ -360,7 +360,7 @@ class Model(nn.Module):
 
 
 class ReprogrammingLayer(nn.Module):
-    def __init__(self, d_model, n_heads, d_keys=None, d_llm=None, attention_dropout=0.1):
+    def __init__(self, d_model, n_heads, window_size=3, d_keys=None, d_llm=None, attention_dropout=0.1):
         super(ReprogrammingLayer, self).__init__()
 
         d_keys = d_keys or (d_model // n_heads)
@@ -370,6 +370,7 @@ class ReprogrammingLayer(nn.Module):
         self.value_projection = nn.Linear(d_llm, d_keys * n_heads)
         self.out_projection = nn.Linear(d_keys * n_heads, d_llm)
         self.n_heads = n_heads
+        self.window_size = window_size
         self.dropout = nn.Dropout(attention_dropout)
 
     def forward(self, target_embedding, source_embedding, value_embedding):
@@ -381,21 +382,39 @@ class ReprogrammingLayer(nn.Module):
         source_embedding = self.key_projection(source_embedding).view(S, H, -1)
         value_embedding = self.value_projection(value_embedding).view(S, H, -1)
 
-        out = self.reprogramming(target_embedding, source_embedding, value_embedding)
+        out = self.reprogramming_with_sliding_window_attention(target_embedding, source_embedding, value_embedding)
 
         out = out.reshape(B, L, -1)
 
         return self.out_projection(out)
 
-    def reprogramming(self, target_embedding, source_embedding, value_embedding):
+    def reprogramming_with_sliding_window_attention(self, target_embedding, source_embedding, value_embedding):
         B, L, H, E = target_embedding.shape
 
         scale = 1. / sqrt(E)
 
-        scores = torch.einsum("blhe,she->bhls", target_embedding, source_embedding)
+        reprogramming_embedding = torch.zeros_like(target_embedding)
 
-        A = self.dropout(torch.softmax(scale * scores, dim=-1))
-        reprogramming_embedding = torch.einsum("bhls,she->blhe", A, value_embedding)
+        time_bias = torch.arange(L, device=target_embedding.device).float()
+
+        for i in range(L):
+
+            start_idx = max(0, i - self.window_size // 2)
+            end_idx = min(L, i + self.window_size // 2 + 1)
+
+            target_window = target_embedding[:, start_idx:end_idx, :, :]  # (B, window_size, H, d_keys)
+            source_window = source_embedding[start_idx:end_idx, :, :]  # (window_size, H, d_keys)
+            value_window = value_embedding[start_idx:end_idx, :, :]  # (window_size, H, d_values)
+
+            scores = torch.einsum("blhe,she->bhls", target_window, source_window)
+
+            time_scores = scores + time_bias[i]
+
+            A = self.dropout(torch.softmax(scale * time_scores, dim=-1))
+
+            reprogramming_window = torch.einsum("bhls,she->blhe", A, value_window)
+
+            reprogramming_embedding[:, start_idx:end_idx, :, :] = reprogramming_window
 
         return reprogramming_embedding
     
