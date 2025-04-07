@@ -37,6 +37,7 @@ parser.add_argument('--model_comment', type=str, required=True, default='none', 
 parser.add_argument('--model', type=str, required=True, default='Autoformer',
                     help='model name, options: [Autoformer, DLinear]')
 parser.add_argument('--seed', type=int, default=2021, help='random seed')
+parser.add_argument('--wandb_title', type=str, default="none", help='wandb project name')
 
 # data loader
 parser.add_argument('--data', type=str, required=True, default='ETTm1', help='dataset type')
@@ -118,12 +119,12 @@ accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspe
 wandb.login(key="d8a57853232ad9c5337ec726db40457ebbf81f1a")
 run = wandb.init(
     # Set the wandb project where this run will be logged.
-    project="long-term-extend-{}".format(args.data),
+    project="final-{}".format(args.wandb_title),
     # Track hyperparameters and run metadata.
     config={
+        "model": args.model,
         "data": args.data,
         "pred_len": args.pred_len,
-        "attn": args.attn_type,
         "window_size": args.window_size,
     },
 )
