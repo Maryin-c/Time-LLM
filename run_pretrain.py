@@ -13,6 +13,8 @@ import random
 import numpy as np
 import os
 
+import wandb
+
 os.environ['CURL_CA_BUNDLE'] = ''
 os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
 
@@ -34,6 +36,7 @@ parser.add_argument('--model_comment', type=str, required=True, default='none', 
 parser.add_argument('--model', type=str, required=True, default='Autoformer',
                     help='model name, options: [Autoformer, DLinear]')
 parser.add_argument('--seed', type=int, default=2021, help='random seed')
+parser.add_argument('--wandb_title', type=str, default="none", help='wandb project name')
 
 # data loader
 parser.add_argument('--data_pretrain', type=str, required=True, default='ETTm1', help='dataset type')
@@ -97,11 +100,30 @@ parser.add_argument('--pct_start', type=float, default=0.2, help='pct_start')
 parser.add_argument('--use_amp', action='store_true', help='use automatic mixed precision training', default=False)
 parser.add_argument('--llm_layers', type=int, default=6)
 parser.add_argument('--percent', type=int, default=100)
+parser.add_argument('--attn_type', type=str, default='mha', help='attention type of ReprogrammingLayer')
+parser.add_argument('--n_groups', type=int, default=4, help='head groups for GQA')
+
+parser.add_argument('--q_lora_rank', type=int, default=16, help='q_lora_rank in mla')
+parser.add_argument('--kv_lora_rank', type=int, default=16, help='kv_lora_rank in mla')
+parser.add_argument('--window_size', type=int, default=3, help='revised attention window size')
 
 args = parser.parse_args()
 ddp_kwargs = DistributedDataParallelKwargs(find_unused_parameters=True)
 deepspeed_plugin = DeepSpeedPlugin(hf_ds_config='./ds_config_zero2.json')
 accelerator = Accelerator(kwargs_handlers=[ddp_kwargs], deepspeed_plugin=deepspeed_plugin)
+
+wandb.login(key="d8a57853232ad9c5337ec726db40457ebbf81f1a")
+run = wandb.init(
+    # Set the wandb project where this run will be logged.
+    project="final-{}".format(args.wandb_title),
+    # Track hyperparameters and run metadata.
+    config={
+        "model": args.model,
+        "data": args.data,
+        "pred_len": args.pred_len,
+        "window_size": args.window_size,
+    },
+)
 
 for ii in range(args.itr):
     # setting record of experiments
@@ -218,11 +240,15 @@ for ii in range(args.itr):
                 train_loss.append(loss.item())
 
             if (i + 1) % 100 == 0:
-                accelerator.print(
-                    "\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()))
+                # accelerator.print(
+                #     "\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()))
+
+                print("\titers: {0}, epoch: {1} | loss: {2:.7f}".format(i + 1, epoch + 1, loss.item()), flush=True)
+
                 speed = (time.time() - time_now) / iter_count
                 left_time = speed * ((args.train_epochs - epoch) * train_steps - i)
-                accelerator.print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
+                # accelerator.print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time))
+                print('\tspeed: {:.4f}s/iter; left time: {:.4f}s'.format(speed, left_time), flush=True)
                 iter_count = 0
                 time_now = time.time()
 
@@ -238,6 +264,8 @@ for ii in range(args.itr):
                 adjust_learning_rate(accelerator, model_optim, scheduler, epoch + 1, args, printout=False)
                 scheduler.step()
 
+            run.log({"loss": loss.item()})
+
         accelerator.print("Epoch: {} cost time: {}".format(epoch + 1, time.time() - epoch_time))
         train_loss = np.average(train_loss)
         vali_loss, vali_mae_loss = vali(args, accelerator, model, vali_data, vali_loader, criterion, mae_metric)
@@ -245,6 +273,12 @@ for ii in range(args.itr):
         accelerator.print(
             "Epoch: {0} | Train Loss: {1:.7f} Vali Loss: {2:.7f} Test Loss: {3:.7f} MAE Loss: {4:.7f}".format(
                 epoch + 1, train_loss, vali_loss, test_loss, test_mae_loss))
+        run.log({
+            "Train Loss": train_loss, 
+            "Vali Loss": vali_loss,
+            "Test Loss": test_loss,
+            "MAE Loss": test_mae_loss,
+            })
 
         early_stopping(vali_loss, model, path)
         if early_stopping.early_stop:
@@ -263,6 +297,8 @@ for ii in range(args.itr):
 
         else:
             accelerator.print('Updating learning rate to {}'.format(scheduler.get_last_lr()[0]))
+
+run.finish()
 
 accelerator.wait_for_everyone()
 if accelerator.is_local_main_process:

@@ -152,10 +152,8 @@ for ii in range(args.itr):
     train_data, train_loader = data_provider(args, 'train')
     vali_data, vali_loader = data_provider(args, 'val')
     test_data, test_loader = data_provider(args, 'test')
-
     args.content = load_content(args)
     print(args.content, flush=True)
-
     if args.model == 'Autoformer':
         model = Autoformer.Model(args).float()
     elif args.model == 'DLinear':
@@ -269,10 +267,6 @@ for ii in range(args.itr):
             if args.lradj == 'TST':
                 adjust_learning_rate(accelerator, model_optim, scheduler, epoch + 1, args, printout=False)
                 scheduler.step()
-            
-            run.log({"loss": loss.item()})
-
-            run.log({"loss": loss.item()})
 
             run.log({"loss": loss.item()})
 
@@ -283,21 +277,6 @@ for ii in range(args.itr):
         accelerator.print(
             "Epoch: {0} | Train Loss: {1:.7f} Vali Loss: {2:.7f} Test Loss: {3:.7f} MAE Loss: {4:.7f}".format(
                 epoch + 1, train_loss, vali_loss, test_loss, test_mae_loss))
-        
-        run.log({
-            "Train Loss": train_loss, 
-            "Vali Loss": vali_loss,
-            "Test Loss": test_loss,
-            "MAE Loss": test_mae_loss,
-            })
-
-        run.log({
-            "Train Loss": train_loss, 
-            "Vali Loss": vali_loss,
-            "Test Loss": test_loss,
-            "MAE Loss": test_mae_loss,
-            })
-
         run.log({
             "Train Loss": train_loss, 
             "Vali Loss": vali_loss,
