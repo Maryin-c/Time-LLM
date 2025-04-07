@@ -55,7 +55,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --llm_model DeepSeek \
   --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
-  --percent 10
+  --percent 10 \
+  --prompt_domain 1
 
 
 accelerate launch --mixed_precision bf16 run_main.py \
@@ -87,7 +88,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --llm_model DeepSeek \
   --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
-  --percent 10
+  --percent 10 \
+  --prompt_domain 1
 ##################################################################### 64 ###############
 
 
@@ -120,7 +122,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --llm_model DeepSeek \
   --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
-  --percent 5
+  --percent 5 \
+  --prompt_domain 1
 
 
 accelerate launch --mixed_precision bf16 run_main.py \
@@ -153,4 +156,5 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --llm_model DeepSeek \
   --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
-  --percent 5
+  --percent 5 \
+  --prompt_domain 1
