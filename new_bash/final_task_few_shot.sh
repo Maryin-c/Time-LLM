@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH --job-name=final_few
-#SBATCH --output=./res/final_few_new_res.txt
-#SBATCH --error=./res/final_few_new_error.txt
+#SBATCH --job-name=final_few2
+#SBATCH --output=./res/final_few_2_res.txt
+#SBATCH --error=./res/final_few_2_error.txt
 #SBATCH --time=120:00:00
 #SBATCH --gres=gpu:h100-47:1
 #SBATCH --mem=256G
@@ -10,7 +10,7 @@
 #SBATCH --mail-user=e1350606@u.nus.edu
 
 source ../../miniconda3/etc/profile.d/conda.sh
-conda activate qwen
+conda activate timellm
 
 model_name=TimeLLM
 train_epochs=10
@@ -19,7 +19,7 @@ llama_layers=32
 
 #master_port=25000
 #num_process=2
-batch_size=4
+batch_size=8
 d_model=32
 d_ff=128
 
@@ -52,8 +52,6 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
-  --llm_model DeepSeek \
-  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 10 \
   --prompt_domain 1
@@ -85,8 +83,6 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
-  --llm_model DeepSeek \
-  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 10 \
   --prompt_domain 1
@@ -119,8 +115,6 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
-  --llm_model DeepSeek \
-  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 5 \
   --prompt_domain 1
@@ -153,8 +147,6 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
-  --llm_model DeepSeek \
-  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 5 \
   --prompt_domain 1
