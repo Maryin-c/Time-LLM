@@ -163,7 +163,8 @@ def vali(args, accelerator, model, vali_data, vali_loader, criterion, mae_metric
                 else:
                     outputs = model(batch_x, batch_x_mark, dec_inp, batch_y_mark)
 
-            outputs, batch_y = accelerator.gather_for_metrics((outputs, batch_y))
+            if accelerator.num_processes > 1:
+                outputs, batch_y = accelerator.gather_for_metrics((outputs, batch_y))
 
             f_dim = -1 if args.features == 'MS' else 0
             outputs = outputs[:, -args.pred_len:, f_dim:]

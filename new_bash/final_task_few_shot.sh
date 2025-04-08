@@ -10,7 +10,7 @@
 #SBATCH --mail-user=e1350606@u.nus.edu
 
 source ../../miniconda3/etc/profile.d/conda.sh
-conda activate timellm
+conda activate qwen
 
 model_name=TimeLLM
 train_epochs=10
@@ -52,6 +52,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
+  --llm_model DeepSeek \
+  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 10 \
   --prompt_domain 1
@@ -83,6 +85,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
+  --llm_model DeepSeek \
+  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 10 \
   --prompt_domain 1
@@ -115,6 +119,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
+  --llm_model DeepSeek \
+  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 5 \
   --prompt_domain 1
@@ -147,6 +153,8 @@ accelerate launch --mixed_precision bf16 run_main.py \
   --train_epochs $train_epochs \
   --model_comment $comment \
   --window_size 64 \
+  --llm_model DeepSeek \
+  --llm_dim 2048 \
   --wandb_title 'long-term-few-shot' \
   --percent 5 \
   --prompt_domain 1
