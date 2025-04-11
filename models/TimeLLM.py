@@ -6,7 +6,7 @@ import torch.nn as nn
 from transformers import LlamaConfig, LlamaModel, LlamaTokenizer, GPT2Config, GPT2Model, GPT2Tokenizer, BertConfig, \
     BertModel, BertTokenizer
 from transformers import AutoModel, AutoTokenizer, AutoConfig
-from layers.Embed import PatchEmbedding
+from layers.Embed import PatchEmbedding, RotaryPositionalEmbedding, apply_rope
 import transformers
 from layers.StandardNorm import Normalize
 
@@ -347,6 +347,7 @@ class ReprogrammingLayer(nn.Module):
         self.out_projection = nn.Linear(d_keys * n_heads, d_llm)
         self.n_heads = n_heads
         self.dropout = nn.Dropout(attention_dropout)
+        self.rope = RotaryPositionalEmbedding(d_keys)
 
     def forward(self, target_embedding, source_embedding, value_embedding):
         B, L, _ = target_embedding.shape
@@ -366,9 +367,14 @@ class ReprogrammingLayer(nn.Module):
     def reprogramming(self, target_embedding, source_embedding, value_embedding):
         B, L, H, E = target_embedding.shape
 
+        sin, cos = self.rope(seq_len=L)
+
         scale = 1. / sqrt(E)
 
-        scores = torch.einsum("blhe,she->bhls", target_embedding, source_embedding)
+        queries = apply_rope(target_embedding, sin, cos)  # [B, L, H, E]
+        keys = apply_rope(source_embedding, sin, cos)
+
+        scores = torch.einsum("blhe,she->bhls", queries, keys)
 
         A = self.dropout(torch.softmax(scale * scores, dim=-1))
         reprogramming_embedding = torch.einsum("bhls,she->blhe", A, value_embedding)

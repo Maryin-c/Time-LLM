@@ -27,10 +27,6 @@ class PositionalEmbedding(nn.Module):
         return self.pe[:, :x.size(1)]
 
 
-def rotate_half(x):
-    x1, x2 = x.chunk(2, dim=-1)
-    return torch.cat((-x2, x1), dim=-1)
-
 def apply_rope(x, sin, cos):
     x1, x2 = x.chunk(2, dim=-1)
     part1 = x1 * cos - x2 * sin
@@ -38,20 +34,21 @@ def apply_rope(x, sin, cos):
     return torch.cat((part1, part2), dim=-1)
 
 class RotaryPositionalEmbedding(nn.Module):
-    def __init__(self, d_model, max_seq_len=512):
+    def __init__(self, dim, max_seq_len=512):
         super().__init__()
-        inv_freq = 1.0 / (10000 ** (torch.arange(0, d_model, 2).float() / d_model))
-        position = torch.arange(max_seq_len, dtype=torch.float)
+        inv_freq = 1.0 / (10000 ** (torch.arange(0, dim, 2, dtype=torch.float32) / dim))
+        position = torch.arange(max_seq_len, dtype=torch.float32)
         sinusoid = torch.einsum("i,j->ij", position, inv_freq)
-        sin = sinusoid.sin()[None, None, :, :]
-        cos = sinusoid.cos()[None, None, :, :]
-        self.register_buffer("sin", sin)
-        self.register_buffer("cos", cos)
+        sin = sinusoid.sin()
+        cos = sinusoid.cos()
+        self.register_buffer("sin", sin[None, None, :, :])
+        self.register_buffer("cos", cos[None, None, :, :])
 
-    def forward(self, x: torch.Tensor):
-        # x shape: (batch_size, seq_len, dim)
-        seq_len = x.shape[1]
-        return apply_rope(x, self.sin[:, :, :seq_len, :], self.cos[:, :, :seq_len, :])
+    def forward(self, seq_len: int):
+        return (
+            self.sin[:, :, :seq_len, :],
+            self.cos[:, :, :seq_len, :]
+        )
 
 
 class TokenEmbedding(nn.Module):
@@ -192,14 +189,8 @@ class PatchEmbedding(nn.Module):
         self.stride = stride
         self.padding_patch_layer = ReplicationPad1d((0, stride))
 
-        assert d_model % 2 == 0, "d_model must be even for RoPE"
-
         # Backbone, Input encoding: projection of feature vectors onto a d-dim vector space
         self.value_embedding = TokenEmbedding(patch_len, d_model)
-
-        # Positional embedding
-        # self.position_embedding = PositionalEmbedding(d_model)
-        self.position_embedding = RotaryPositionalEmbedding(d_model)
 
         # Residual dropout
         self.dropout = nn.Dropout(dropout)
@@ -212,12 +203,6 @@ class PatchEmbedding(nn.Module):
         x = torch.reshape(x, (x.shape[0] * x.shape[1], x.shape[2], x.shape[3]))
         # Input encoding
         x = self.value_embedding(x)
-        # dynamic position encoding
-        x = self.position_embedding(x)
-        x = x.squeeze(0)
-        # seq_len = x.size(1)
-        # pos = self.position_embedding.pe[:, :seq_len]
-        # x = x + pos
         return self.dropout(x), n_vars
 
 
