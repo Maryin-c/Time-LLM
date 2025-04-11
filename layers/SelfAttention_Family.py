@@ -136,7 +136,7 @@ class SlidingWindowMask:
         mask = np.ones((seq_len, seq_len), dtype=bool)
         for i in range(seq_len):
             start = max(0, i - window_size)
-            end = min(seq_len, i + window_size + 1)
+            end = i + 1
             mask[i, start:end] = False
         self.mask = torch.tensor(mask, device=device)
 
